@@ -6,15 +6,48 @@ import os
 
 from time import sleep
 
+def runPdfLatex(docName):
+    os.system('pdflatex ' + docName + '.tex')
+    os.system('rm -f ' + docName + '.aux')
+    os.system('rm -f ' + docName + '.log')
+    os.system('rm -f ' + docName + '.out')
+
+def getNumberOfPagesPDF(docName):
+    cmd = "pdfinfo " + docName + ".pdf | grep 'Pages' | awk '{print $2}'"
+    noPages = os.popen(cmd).read().strip()
+    print('No pages: ' + str(noPages))
+#    myPdfReader = pyPdf.PdfFileReader(open(docName + '.pdf'))
+#    noPages = myPdfReader.getNumPages()
+#    print('No pages: ' + str(noPages))
+
+
 print('Generate Chlaus Documents')
 print('  V00.01')
 
 os.system('rm -f *~')
 
-os.system('pdflatex familie_x.tex')
-os.system('rm -f familie_x.aux')
-os.system('rm -f familie_x.log')
-os.system('rm -f familie_x.out')
+docName='2020_12_05_Familie_Muster'
+
+os.system('cp familie_template.tex ' + docName + '.tex')
+
+kind1=str('\section{Prozessor auswaehlen}\n' +
+      'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n' +
+      'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n' +
+      'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n')
+
+endOfDoc='\n\n\end{document}\n'
+
+fileHdl = open(docName + '.tex', 'a')
+fileHdl.write('\n\n')
+fileHdl.write(kind1)
+fileHdl.write(kind1)
+fileHdl.write(kind1)
+fileHdl.write(endOfDoc)
+fileHdl.close()
+
+runPdfLatex(docName)
+getNumberOfPagesPDF(docName)
+
 
 ## ------------------------------------------------------------------------------
 ## Print software infos
