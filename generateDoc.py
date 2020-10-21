@@ -6,16 +6,50 @@ import os
 
 from time import sleep
 
-def runPdfLatex(docName):
-    os.system('pdflatex ' + docName + '.tex')
-    os.system('rm -f ' + docName + '.aux')
-    os.system('rm -f ' + docName + '.log')
-    os.system('rm -f ' + docName + '.out')
+class GenerateFamilyDoc:
+    def __init__(self, familyName, visitDate, noChildren):
+        self.m_familyName = familyName
+        self.m_visitDate = visitDate
+        self.m_fileName = '2020_12_0' + str(visitDate) + '__' + familyName
+        self.m_noChildren = noChildren
 
-def getNumberOfPagesPDF(docName):
-    cmd = "pdfinfo " + docName + ".pdf | grep 'Pages' | awk '{print $2}'"
-    noPages = os.popen(cmd).read().strip()
-    print('No pages: ' + str(noPages))
+    def generate(self):
+        os.system('cp familie_template.tex ' + self.m_fileName + '.tex')
+        self.__addChild()
+        self.__finalizeDoc()
+        self.__generatePdf()
+        self.__getNumberOfPagesPDF()
+
+    def __addChild(self):
+        kind1=str('\section{Prozessor auswaehlen}\n' +
+                  'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n' +
+                  'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n' +
+                  'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n')
+        fileHdl = open(self.m_fileName + '.tex', 'a')
+        fileHdl.write('\n')
+        fileHdl.write(kind1)
+        fileHdl.close()
+
+    def __finalizeDoc(self):
+        endOfDoc='\n\n\end{document}\n'
+        fileHdl = open(self.m_fileName + '.tex', 'a')
+        fileHdl.write(endOfDoc)
+        fileHdl.close()
+
+    def __generatePdf(self):
+        os.system('pdflatex ' + self.m_fileName + '.tex')
+        os.system('rm -f ' + self.m_fileName + '.aux')
+        os.system('rm -f ' + self.m_fileName + '.log')
+        os.system('rm -f ' + self.m_fileName + '.out')
+        #os.system('rm -f ' + self.m_fileName + '.tex')
+
+    def __getNumberOfPagesPDF(self):
+        cmd = "pdfinfo " + self.m_fileName + ".pdf | grep 'Pages' | awk '{print $2}'"
+        noPages = os.popen(cmd).read().strip()
+        print('No pages: ' + str(noPages))
+        return noPages
+
+
 #    myPdfReader = pyPdf.PdfFileReader(open(docName + '.pdf'))
 #    noPages = myPdfReader.getNumPages()
 #    print('No pages: ' + str(noPages))
@@ -26,27 +60,16 @@ print('  V00.01')
 
 os.system('rm -f *~')
 
-docName='2020_12_05_Familie_Muster'
 
-os.system('cp familie_template.tex ' + docName + '.tex')
+fam1 = GenerateFamilyDoc('Muster1', 5, 2)
+fam1.generate()
 
-kind1=str('\section{Prozessor auswaehlen}\n' +
-      'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n' +
-      'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n' +
-      'Ich wollte den Prozessor nicht direkt aufs Board layouten. Das habe ich mir fuer den ersten Schritt nicht zugetraut. Aus EMV-Gruenden (Elektro Magnetische Vertraeglichkeit) ist das nicht ganz einfach und braucht etwas Erfahrung. Deswegen habe ich ein Eval-Board gekauft. Dort ist der Prozessor vernuenftig eingebaut. Preis pro Stueck, weniger als 1\$.\n\n')
+fam2 = GenerateFamilyDoc('Muster2', 6, 3)
+fam2.generate()
 
-endOfDoc='\n\n\end{document}\n'
 
-fileHdl = open(docName + '.tex', 'a')
-fileHdl.write('\n\n')
-fileHdl.write(kind1)
-fileHdl.write(kind1)
-fileHdl.write(kind1)
-fileHdl.write(endOfDoc)
-fileHdl.close()
 
-runPdfLatex(docName)
-getNumberOfPagesPDF(docName)
+
 
 
 ## ------------------------------------------------------------------------------
